@@ -1,9 +1,8 @@
-README
 
-
-Population viability analysis for Gopherus tortoises (G. polyphemus and G. agassizii)
+## Population viability analysis for Gopherus tortoises (G. polyphemus and G. agassizii)
 Kevin T. Shoemaker, Kevin J. Loope, Elizabeth A. Hunter
-6/28/23
+
+Updated: 6/28/2023
 
 This repository contains code to run simulation models projecting population demographic responses to climate change under a variety of climate change scenarios and vital rate sensitivities to climate.  Each species is modeled separately using a shared framework: populations are simulated on range-wide 5x5km grids, divided into 20 age classes with spatially variable, environmentally-determined age at maturity based on empirical data.  Models are initialized with a burn-in step that accounts for unstable starting age-distributions, and models are run through the year 2099.  Vital rates, including parameters representing climate sensitivity, are drawn from empirically-derived distributions, with unique replicate draws of all parameters simultaneously analyzed across all scenarios.  Desert tortoise simulations include 256 scenarios representing various "on-off" combinations of climate sensitivities, as well as 4 climate change projection models.  Gopher tortoise simulations include 3584 scenarios representing various combinations of climate sensitivities and 8 climate change projection models.  For more details, see final report for SERDP project RC18-1103.  
 
