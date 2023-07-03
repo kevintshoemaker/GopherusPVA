@@ -7,7 +7,7 @@ Updated: 6/28/2023
 ### Overview
 This repository contains code to run simulation models projecting population demographic responses to climate change under a variety of climate change scenarios and vital rate sensitivities to climate.  Each species is modeled separately using a shared framework: populations are simulated on range-wide 5x5km grids, divided into 20 age classes with spatially variable, environmentally-determined age at maturity based on empirical data.  Models are initialized with a burn-in step that accounts for unstable starting age-distributions, and models are run through the year 2099.  Vital rates, including parameters representing climate sensitivity, are drawn from empirically-derived distributions, with unique replicate draws of all parameters simultaneously analyzed across all scenarios.  Desert tortoise simulations include 256 scenarios representing various "on-off" combinations of climate sensitivities, as well as 4 climate change projection models.  Gopher tortoise simulations include 3584 scenarios representing various combinations of climate sensitivities and 8 climate change projection models.  For more details, see final report for SERDP project RC18-1103.  
 
-Models are implemented in Program R.  Each species has 4 associated R scripts, an optional bash script for running on a SLURM cluster, and one associated setup_files folder:
+Models are implemented in Program R.  Each species has 8 associated R scripts, an optional bash script for running on a SLURM cluster, and one associated setup_files folder:
 
 **RunSimulations.R** - Open this file to run simulations.  
 
@@ -36,6 +36,7 @@ This script outputs one multi-band tif file for each year of each replicate of e
 
 **Plot_Lambda.R** - This script will generate a bivariate heat map showing the effects of the two largest climate variables on lambda.  
 
+**batch_submitter.sh** - This shell script will generate and submit a set of SLURM submission files with different arrayIDs that will allow for further parallel processing on a SLURM cluster.  Edit the number of jobs by altering the length of the file generation loop, and correspondingly edit the runs_per_job definition in the RunSimulations.R script to match the number of jobs [runs_per_job<-ceiling(nrow(allruns)/X))] where X is the number of jobs. To use this script, cd to the directory containing the file, edit permissions to make it executable, and run it followed by a run_name to generate a unique output folder for the run (e.g., ./GT_batch_submitter.sh GT_run_3).  Submission files will be created in the folder ./submission_scripts and then submitted to the slurm queue.
 
 ### Notes on run times: 
 
