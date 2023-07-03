@@ -2,10 +2,12 @@
 ## Population viability analysis for Gopherus tortoises (G. polyphemus and G. agassizii)
 Kevin T. Shoemaker, Kevin J. Loope, Elizabeth A. Hunter
 
-Updated: 6/28/2023
+Updated: 7/03/2023
 
 ### Overview
 This repository contains code to run simulation models projecting population demographic responses to climate change under a variety of climate change scenarios and vital rate sensitivities to climate.  Each species is modeled separately using a shared framework: populations are simulated on range-wide 5x5km grids, divided into 20 age classes with spatially variable, environmentally-determined age at maturity based on empirical data.  Models are initialized with a burn-in step that accounts for unstable starting age-distributions, and models are run through the year 2099.  Vital rates, including parameters representing climate sensitivity, are drawn from empirically-derived distributions, with unique replicate draws of all parameters simultaneously analyzed across all scenarios.  Desert tortoise simulations include 256 scenarios representing various "on-off" combinations of climate sensitivities, as well as 4 climate change projection models.  Gopher tortoise simulations include 3584 scenarios representing various combinations of climate sensitivities and 8 climate change projection models.  For more details, see final report for SERDP project RC18-1103.  
+
+NOTE: this repository only includes the climate projection data for only a single climate scenario for Desert Tortoise (RCP 4.5) and Gopher Tortoise (CES45). Please contact the authors for the complete climate projection data needed for running all scnenarios.  
 
 Models are implemented in Program R.  Each species has 8 associated R scripts, an optional bash script for running on a SLURM cluster, and one associated setup_files folder:
 
