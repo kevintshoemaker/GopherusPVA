@@ -1,0 +1,19 @@
+Parameter,Subparameter,Type,Model_out,R_obj,Used,Notes
+CS,CS_intercept,Posterior,gt.mcmc,b.egg.int,Y,Mean clutch size - CHANGE to be zero centered so that it represents noise around the Folt relationship
+CS,CS_bodysize,Posterior,gt.mcmc,b.scl,Y,Body size effect using zero-centered body size data (see mean and SD body size info for Ft. Stewart below)
+CS,CS_junetmax,Posterior,gt.mcmc,b.tmax,Y,Effect of June maximum temperature zero-centered (see mean and SD of April-May tmax below)
+CS,CS_eff_attenuation,R_object,,cs.pr.attenuation,N,Attenuation of the CS effect based on 30-year normals difference in annual mean temp from Ft. Stewart to rest of range
+HS,HS_clim_eff,Function,,clim.hatch.term,Y,"clim.hatch.term produces a multiplier that HS should be multiplied by to reduce HS as climate warms. June-July mean temperature for predicting nest temperature (unit of degree C).  Precip effect on nest temperature - daily mean precip during incubation period (June-July, unit of mm). (2017 is the baseline year for temperature/precip differences for the effect on hatching success). Now saved as TIF in setup_files..."
+HS,HS_nest_tempeff,LM_object,model.nest,mean.airT,Y,"lm object that produces means and sds for effects of temperature on nest temperature (which feeds into clim.hatch.term function (ignore effects of nest depth, etc.)"
+HS,HS_nest_precipeff,LM_object,model.nest,mean.precip,Y,"lm object that produces means and sds for effects of precipitation on nest temperature (which feeds into clim.hatch.term function (ignore effects of nest depth, etc.)"
+HS,HS_meansnest,R_object,,means.nest,Y,dataframe needed for computing HS
+PF,PF_clim_eff,Function,,sex.ratio.clim,Y,Function for calculating sex ratio from predicted nest temperature and precipitation
+PF,PF_nest_tempeff,LM_object,model.nest,mean.airT,Y,"lm object that produces means and sds for effects of temperature on nest temperature (which feeds into clim.hatch.term function (ignore effects of nest depth, etc.)"
+PF,PF_nest_precipeff,LM_object,model.nest,mean.precip,Y,"lm object that produces means and sds for effects of precipitation on nest temperature (which feeds into clim.hatch.term function (ignore effects of nest depth, etc.)"
+PF,PF_sexratio_nestdata,R_object,,sex.ratio.nest.data,Y,Sex ratio data required to run sex.tmean.pmean.top model
+PF,PF_clim_eff_model,R_object,,sex.tmean.pmean.top,Y,Needed to run sex.ratio.clim function
+PHI_A,,,,,Y,"(All implemented in model, base fire return interval to create years-since-burn which then has a climate effect multiplier)"
+PR,PR_intercept,Posterior,gt.mcmc,b.psi.int,Y,Mean probability of reproduction
+PR,PR_bodysize,Posterior,gt.mcmc,b.psi.scl,Y,Body size effect using zero-centered body size data (see mean and SD body size info for Ft. Stewart below)
+PR,PR_aprmaytmax,Posterior,gt.mcmc,b.psi.tmax,Y,Effect of April-May maximum temperature zero-centered (see mean and SD of April-May tmax below)
+PR,PR_eff_attenuation,R_object,,cs.pr.attenuation,N,Attenuation of the CS effect based on 30-year normals difference in annual mean temp from Ft. Stewart to rest of range

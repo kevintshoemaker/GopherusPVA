@@ -1,0 +1,39 @@
+Parameter,Type,Subparameter,Distribution,Constraint,Value,Min,Max,Mean,SD,Used,Comments
+CS,ancillary,mmt.mn,fixed,,17.30777,,,,,Y,KTS (5/13): this is correct
+CS,ancillary,mmt.sd,fixed,,1.73196,,,,,Y,KTS (5/13): this is correct
+CS,ancillary,mtr.mn,fixed,,14.05545,,,,,Y,KTS (5/13): this is correct
+CS,ancillary,mtr.sd,fixed,,1.569801,,,,,Y,KTS (5/13): this is correct
+CS,ancillary,bodysize.mn,fixed,,233.6707,,,,,Y,KTS (5/13): this is correct
+CS,ancillary,bodysize.sd,fixed,,18.33827,,,,,Y,KTS (5/13): this is correct
+CS,ancillary,precip.mn,fixed,,187.1008,,,,,Y,KTS (5/13): this is correct
+CS,ancillary,precip.sd,fixed,,96.10303,,,,,Y,KTS (5/13): this is correct
+PR,ancillary,mmt.mn,fixed,,17.30777,,,,,Y,KTS (5/13): this is correct
+PR,ancillary,mmt.sd,fixed,,1.73196,,,,,Y,KTS (5/13): this is correct
+PR,ancillary,mtr.mn,fixed,,14.05545,,,,,Y,
+PR,ancillary,mtr.sd,fixed,,1.569801,,,,,Y,
+PR,ancillary,bodysize.mn,fixed,,233.6707,,,,,Y,
+PR,ancillary,bodysize.sd,fixed,,18.33827,,,,,Y,
+PR,ancillary,precip.mn,fixed,,187.1008,,,,,Y,
+PR,ancillary,precip.sd,fixed,,96.10303,,,,,Y,
+gamma,param,dispersal,uniform,c01,,0,0.01,,,Y,Based on Folt (GT model)
+GROW,ancillary,t.maxspr.mn,fixed,,21.93,,,,,Y,EH (5/4): calculated from revised covariate for MW's growth analysis using mean maximum monthly temperatures Feb-May (in PUBLICATIONS\growth_ch1\analyses\rcode\growth_testudinidae\climate_git_monthlyvars script)
+GROW,ancillary,t.maxspr.sd,fixed,,1.99,,,,,Y,EH (5/4): calculated from revised covariate for MW's growth analysis using mean maximum monthly temperatures Feb-May (in PUBLICATIONS\growth_ch1\analyses\rcode\growth_testudinidae\climate_git_monthlyvars script)
+GROW,ancillary,pptwinsp.mn,fixed,,116.5,,,,,Y,EH (5/4): calculated from revised covariate for MW's growth analysis using winter precipitation Nussear variable (in PUBLICATIONS\growth_ch1\analyses\rcode\growth_testudinidae\climate_git_monthlyvars script)
+GROW,ancillary,pptwinsp.sd,fixed,,71.06,,,,,Y,EH (5/4): calculated from revised covariate for MW's growth analysis using winter precipitation Nussear variable (in PUBLICATIONS\growth_ch1\analyses\rcode\growth_testudinidae\climate_git_monthlyvars script)
+GROW,ancillary,tmin.mn,fixed,,10.66,,,,,Y,EH (5/4): calculated from revised covariate for MW's growth analysis using average annual minimum monthly temperature (instead of growing degree days) (in PUBLICATIONS\growth_ch1\analyses\rcode\growth_testudinidae\climate_git_monthlyvars script)
+GROW,ancillary,tmin.sd,fixed,,2,,,,,Y,EH (5/4): calculated from revised covariate for MW's growth analysis using average annual minimum monthly temperature (instead of growing degree days) (in PUBLICATIONS\growth_ch1\analyses\rcode\growth_testudinidae\climate_git_monthlyvars script)
+MA,param,size.at.maturity,uniform,none,,189,212,,,Y,From Walden dissertation- in mm
+PF,param,propfemale.mn,normal,c01,,,,0.5,0.05,Y,PLACEHOLDER
+PF,ancillary,t.mean.ref,fixed,,31.57,,,,,Y,"Temperature at which there is 50:50 sex ratio (baseline for change calculation), from Maragarete's data."
+PF,param,sex.tmean,normal,none,,,,0.5374,0.2039,Y,KJL 3/20/23 these are pulled from the model sex.tmean so we no longer have to call the model to do predict().  Effect of nest temp on percent female ON LOGIT SCALE
+NS,param,nestsucc,normal,c01,,,,0.5705,0.1247768675,Y,"based on 4 studies (listed in DT hatching tab), SEM used for SD since range was wide.  Margarete's estimate was 64%, but her nests were protected"
+HS,param,hs.mn,uniform,none,,0.71,0.84,,,Y,based on 4 studies (listed in DT hatching tab) including Margarete's data
+HS,ancillary,tmn_mean,fixed,,31.48625,,,,,Y,EH (5/4): Not sure where this is from or what it is used for
+HS,param,nest.hs.slope,normal,none,,,,-0.41,0.17,Y,ON LOGIT SCALE!  Relationship using MW's data
+PHI_J,param,juvsurv,uniform,none,,0.76,0.85,,,Y,Turner 1987: 76-85%;  Doak 1994: 78-84%; Reed 2009 (has the modified Turner life table)
+PHI_A,param,phia.precipeff.mn,normal,none,,,,0.03162,0.01392,N,From PSP analysis. intercept taken from posterior (secondary analysis of posterior distribution- ultimately should put in the bayesian model and include in posterior). logit scale. Phasing out in favor of Hromada model...
+PHI_A,ancillary,precip.mn,fixed,,284.31,,,,,Y,Email from S. Hromada 5/15/23
+PHI_A,ancillary,precip.sd,fixed,,109.43,,,,,Y,Email from S. Hromada 5/15/23
+PHI_A,ancillary,tmax.mn,fixed,,29.18,,,,,Y,Email from S. Hromada 5/15/23
+PHI_A,ancillary,tmax.sd,fixed,,1.79,,,,,Y,Email from S. Hromada 5/15/23
+PHI_H,param,hatchsurv,uniform,none,,0.37,0.72,,,Y,Turner 1987: 55%; Doak 1994: 72%        Head-started tortoises (including raven predation): Tuberville et al. 2019: 48%; Daly et al. 2019: 37-44%

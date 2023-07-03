@@ -1,0 +1,24 @@
+Parameter,Type,Subparameter,Distribution,Constraint,Value,Min,Max,Mean,SD,Used,Comments
+CS,param,cs.intercept.mn,normal,none,,,,-3.54,0,Y,From Folt
+CS,param,cs.tempeff.mn,normal,none,,,,0.48,0,Y,From Folt
+CS,ancillary,junetmax.mn,fixed,,32.52,,,,,Y,June Tmax mean and sd for centering of CS covariate (covariate had mean subtracted and divided by sd)
+CS,ancillary,junetmax.sd,fixed,,1.47,,,,,Y,
+CS,ancillary,bodysize.mn,fixed,,29.65,,,,,N,KJL: i don't think we are using these anymore. right?
+CS,ancillary,bodysize.sd,fixed,,2.9,,,,,N,KJL: i don't think we are using these anymore. right?
+gamma,param,dispersal,uniform,none,,0,0.01,,,Y,Based on Folt
+HS,param,hs.mn,normal,c01,,0.66,0.97,0.81,0.08,Y,"Updated from Folt to include our data, Rostal/Jones 2002, and removed translocated pops (uniform is +/- 2SD)"
+MA,param,ma.intercept.mn,normal,none,,,,43.52,0,Y,Reran the lm in Folt code to get the variance-covariance matrix (Folt did not include uncertainty on the intercept).  Used LM with constraint from 10-20years old.  But decided that couldn't include the uncertainty because of description in next line.
+MA,param,ma.tempeff.mn,normal,none,,,,-1.41,0,Y,"Direct from Folt; Effect of mean annual temperature in units of degrees C  **Decided to make this deterministic because if used variance from Folt, climate signal would be lost completely, and we know that's not how maturity age works"
+NS,param,nestsucc,uniform,,,0.15,0.55,,,Y,Changed to uniform (+/- 2SD) from normal because only based on 1 study
+PF,param,propfemale.mn,normal,c01,,,,0.5,0.05,Y,"(Assumes 50:50 sex ratio in present day, may want to update with actual adult sex ratios as vary by latitude)"
+PF,ancillary,t.mean.ref,fixed,,29,,,,,Y,Temperature at which there is 50:50 sex ratio (baseline for change calculation)
+PF,ancillary,p.mean.ref,fixed,,5.38,,,,,Y,Precipitation at which there is 50:50 sex ratio (baseline for change calculation)
+PHI_A,param,adultsurv.mn,normal,c01,,0.92,1,0.96,0.03,Y,Based on Folt (MAKE UPPER LIMIT OF 0.995?)
+PHI_A,param,phi.a.burneff.mn,normal,none,,,,-0.027,0.003,Y,Effect of years-since-burn on adult survival (also apply to juvenile and hatchling survival?)
+PHI_H,param,hatchsurv,uniform,c01,,0,0.4,0.13,0.05,Y,"Uniform is +/- 1 SD instead of 2 because of hitting against bound of zero.  SD is from Folt script. 1/19/23 changed uniform from 0 - 0.29 to 0.04 - 0.4, as this is the range from Perez-Heydrich 2012"
+PHI_J,param,juvsurv,uniform,c01,,0.63,0.91,0.77,0.07,Y,Updated from Folt to first average the 6 Conecuh estimates together (uniform is +/- 2SD)
+PHI_J,param,phi.j.burneff.mn,normal,none,,,,-0.027,0.003,Y,NEED TO IMPLEMENT IN MODEL for scenario with juvenile burn effect
+PR,ancillary,aprmaytmax.mn,fixed,,28.01,,,,,Y,April-May Tmax mean and sd for centering of PR tmax covariate (covariate had mean subtracted and divided by sd)
+PR,ancillary,aprmaytmax.sd,fixed,,1.12,,,,,Y,
+PR,ancillary,bodysize.mn,fixed,,29.65,,,,,N,Ft. Stewart body size parameters used for centering (covariate had mean subtracted and divided by sd)
+PR,ancillary,bodysize.sd,fixed,,2.9,,,,,N,KJL: i don't think we are using these anymore. right?

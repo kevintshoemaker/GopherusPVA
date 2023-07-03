@@ -1,0 +1,34 @@
+Parameter,Subparameter,Type,Model_out,R_obj,Used,Notes
+CS,CS_intercept,Posterior,dt.mcmc,b.numeggs.l,Y,"log egg production NOTE: the ""scale"" column is not used in the code. Instead it is implemented in the GenerateMatrixSampler closure"
+CS,CS_springtmean,Posterior,dt.mcmc,beta.st,Y,"spring temp effect (march - may temperature, or mmt)"
+CS,CS_bodysize,Posterior,dt.mcmc,beta.MCLel,Y,MCL effect on CS
+CS,CS_precip,Posterior,dt.mcmc,beta.cp,Y,precip (march to march) effect on CS
+PR,PR_intercept,Posterior,dt.mcmc,b.p.reproduce.l,Y,logit base prob reproduction
+PR,PR_priorrep,Posterior,dt.mcmc,beta.reproduce,Y,effect of prior-year reproduction on this year's prob repro
+PR,PR_precip,Posterior,dt.mcmc,beta.cp.pr,Y,effect of precip (march to march) on repro prob
+PR,PR_bodysize,Posterior,dt.mcmc,beta.MCLpr,Y,MCL effect on PR
+PR,PR_temprange,Posterior,dt.mcmc,beta.MTRpr,Y,"effect of mean monthly temperature range, march and april"
+GROW,ANC_adultsize,Function,,AdultSize,Y,function for computing adult size as a function of VB model (function) and age at maturity  
+GROW,ANC_VBgen,Function,,VBfunc_generator,Y,"generates a function for computing size-at-age based on current climate characteristics. Used for generating adult size, and for computing age at maturity"
+GROW,ANC_MAfunc,Function,,MAfunc,Y,function for computing age at maturity from a given VB function
+GROW,ANC_growth.t0,Posterior,dt.growth,t0,Y,baseline age at zero size
+GROW,ANC_growth.k.siteprec,Posterior,dt.growth,k.site.prec,Y,precision of site random effect on k param
+GROW,ANC_growth.k.int,Posterior,dt.growth,k.all.meanl,Y,intercept for k parameter
+GROW,ANC_growth.k.tmax,Posterior,dt.growth,k.t.maxspr,Y,"spring maxtemp effect, k param"
+GROW,ANC_growth.k.precip,Posterior,dt.growth,k.pptwinsp,Y,"precip effect, k "
+GROW,ANC_growth.k.tmin,Posterior,dt.growth,k.tmin,Y,"annual mintemp effect, k"
+GROW,ANC_growth.a.int,Posterior,dt.growth,a.all.meanl,Y,"intercept, a"
+GROW,ANC_growth.a.siteprec,Posterior,dt.growth,a.site.prec,Y,precision of site random effect on a param
+GROW,ANC_growth.a.tmax,Posterior,dt.growth,a.tmax,Y,"spring maxtemp effect, k param"
+GROW,ANC_growth.a.precip,Posterior,dt.growth,a.ppt,Y,"precip effect, k "
+GROW,ANC_growth.a.tmin,Posterior,dt.growth,a.tmin,Y,"annual mintemp effect, k"
+PHI_A,PHI_A_intercept,Posterior,dt.surv,phi0,Y,"intercept for adult survival, from PSP analysis."
+PHI_A,PHI_A_siteyear.sd,Posterior,dt.surv,phi.siteyear.eff.sd,Y,"site-year random effect, from PSP analysis."
+PHI_A,PHI_A_intercept,Posterior,dt.surv2,phi0,N,"intercept for adult survival, from Hromada telemetry analysis"
+PHI_A,PHI_A_precip,Posterior,dt.surv2,phi.precip.eff,Y,from Hromada telemetry analysis
+PHI_A,PHI_A_tmax,Posterior,dt.surv2,phi.temp.eff,Y,from Hromada telemetry analysis
+PHI_A,PHI_A_siteyear.sd,Posterior,dt.surv2,phi.year.eff.sd,N,"site-year random effect, from Hromada telemetry analysis"
+PF,PF_clim_eff,Function,,sex.ratio.clim,Y,Function for calculating sex ratio from predicted nest temperature and precipitation
+PF,PF_nest_tempeff,LM_object,model.nest,mean.airT,Y,"lm object that produces means and sds for effects of temperature on nest temperature (which feeds into clim.hatch.term function (ignore effects of nest depth, etc.)"
+HS,HS_clim_eff,Function,,clim.hatch.term,Y,"clim.hatch.term produces a multiplier that HS should be multiplied by to reduce HS as climate warms. June-July mean temperature for predicting nest temperature (unit of degree C).  Precip effect on nest temperature - daily mean precip during incubation period (June-July, unit of mm). (2017 is the baseline year for temperature/precip differences for the effect on hatching success)"
+HS,HS_nest_tempeff,LM_object,model.nest,mean.airT,Y,"lm object that produces means and sds for effects of temperature on nest temperature (which feeds into clim.hatch.term function (ignore effects of nest depth, etc.)"
