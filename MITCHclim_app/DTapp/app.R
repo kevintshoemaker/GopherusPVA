@@ -343,6 +343,14 @@ ui <- fluidPage( #theme=shinytheme("superhero"),title="Page title",
                                            splitLayout(
                                              plotOutput("trajec_plot_main"),
                                              plotOutput("trajec_plot_full") 
+                                           ),
+                                           splitLayout(
+                                             downloadButton('download_TPmain',
+                                                            'Download This Plot',
+                                                            style = "color: #fff; background-color: #27ae60; border-color: #fff;padding: 5px 14px 5px 14px;margin: 5px 5px 5px 5px; "),
+                                             downloadButton('download_TPfull',
+                                                            'Download This Plot',
+                                                            style = "color: #fff; background-color: #27ae60; border-color: #fff;padding: 5px 14px 5px 14px;margin: 5px 5px 5px 5px; ")
                                            )
                                   ),  # end 'current run' panel
                                   tabPanel("Age Structure",fluid=TRUE,br(),
@@ -350,6 +358,14 @@ ui <- fluidPage( #theme=shinytheme("superhero"),title="Page title",
                                            splitLayout(
                                              plotOutput("trajec_plot_main_age"),
                                              plotOutput("trajec_plot_full_age") 
+                                           ),
+                                           splitLayout(
+                                             downloadButton('download_TP_age_main',
+                                                            'Download This Plot',
+                                                            style = "color: #fff; background-color: #27ae60; border-color: #fff;padding: 5px 14px 5px 14px;margin: 5px 5px 5px 5px; "),
+                                             downloadButton('download_TP_age_full',
+                                                            'Download This Plot',
+                                                            style = "color: #fff; background-color: #27ae60; border-color: #fff;padding: 5px 14px 5px 14px;margin: 5px 5px 5px 5px; ")
                                            )
                                   ),  # end 'age structure' panel
                                   #tabPanel("Full Range",fluid=TRUE,),
@@ -377,6 +393,14 @@ ui <- fluidPage( #theme=shinytheme("superhero"),title="Page title",
                                              plotOutput("trajec_plot_compare_clipped"),
                                              plotOutput("trajec_plot_compare"),
                                            ),
+                                           splitLayout(
+                                            downloadButton('download_TP_compare_TOC',
+                                                           'Download This Plot',
+                                                           style = "color: #fff; background-color: #27ae60; border-color: #fff;padding: 5px 14px 5px 14px;margin: 5px 5px 5px 5px; "),
+                                            downloadButton('download_TP_compare',
+                                                           'Download This Plot',
+                                                           style = "color: #fff; background-color: #27ae60; border-color: #fff;padding: 5px 14px 5px 14px;margin: 5px 5px 5px 5px; ")
+                                          )
                                            # fluidRow(
                                            #   div(style="color:purple", #displays on right side of screen 
                                            #       p(strong(h4("Scenarios: "))),
@@ -412,7 +436,16 @@ ui <- fluidPage( #theme=shinytheme("superhero"),title="Page title",
                                              splitLayout(
                                                plotOutput("map_plot_main"),
                                                plotOutput("map_plot_full") 
+                                             ),
+                                             splitLayout(
+                                               downloadButton('download_map_TOC',
+                                                              'Download This Plot',
+                                                              style = "color: #fff; background-color: #27ae60; border-color: #fff;padding: 5px 14px 5px 14px;margin: 5px 5px 5px 5px; "),
+                                               downloadButton('download_map_full',
+                                                              'Download This Plot',
+                                                              style = "color: #fff; background-color: #27ae60; border-color: #fff;padding: 5px 14px 5px 14px;margin: 5px 5px 5px 5px; ")
                                              )
+                                             
                                     )#end tabpanel 'Maps'
                                   # tabPanel("Vital Rates",fluid=TRUE,
                                   #          
@@ -692,6 +725,9 @@ server <- function(input, output, session) {
     myReactives$thisROI <- NULL
     myReactives$polygon <- NULL
     myReactives$numClicks <- 0
+    myReactives$scensRun <- NULL
+    myReactives$compdf <- NULL
+    myReactives$compdf_clipped <- NULL
     leafletProxy("map",session) %>%
       clearShapes() 
   })
@@ -973,57 +1009,81 @@ server <- function(input, output, session) {
   })  # end 'go button
   
   
+  make_trajec_plot <- function(parr){
+    maxabund <- max(sapply(1:nreps,function(t) max(apply(parr[t,,],1,sum)/1000) ))*1.2
+    
+    plot(1,1,pch="",xlim=c(1,nyears+1),
+         ylim=c(0,maxabund),
+         xaxt="n",xlab="Years",ylab="Abundance (thousands)", main="")  #paste0("Scenario ",thisscen," ",thisclim())
+    
+    temp <- lapply(1:nreps,function(t) lines(1:(nyears+1),apply(parr[t,,],1,sum)/1000,col=gray(0.6)) ) 
+    
+    lines(1:(nyears+1),apply(sapply(1:nreps,function(t) apply(parr[t,,],1,sum)),1,median)/1000,lwd=2)
+    
+    axis(1,at=seq(1,nyears+1,length=5),labels = round(seq(2010,2010+nyears,length=5))) 
+  }
+  
+  trajec_plot_full <- reactive({
+    req(poparray())
+    make_trajec_plot(poparray())
+    recordPlot()
+  })
+  
+  trajec_plot_clipped <- reactive({
+    req(poparray_clipped())
+    make_trajec_plot(poparray_clipped())
+    recordPlot()
+  })
+  
   # render the trajectory plots!
   
   output$trajec_plot_full <- renderPlot({
       req(poparray())
-      maxabund <- max(sapply(1:nreps,function(t) max(apply(poparray()[t,,],1,sum)/1000) ))*1.2
-      
-      plot(1,1,pch="",xlim=c(1,nyears+1),
-           ylim=c(0,maxabund),
-           xaxt="n",xlab="Years",ylab="Abundance (thousands)", main="")  #paste0("Scenario ",thisscen," ",thisclim())
-      
-      temp <- lapply(1:nreps,function(t) lines(1:(nyears+1),apply(poparray()[t,,],1,sum)/1000,col=gray(0.6)) ) 
-      
-      lines(1:(nyears+1),apply(sapply(1:nreps,function(t) apply(poparray()[t,,],1,sum)),1,median)/1000,lwd=2)
-      
-      axis(1,at=seq(1,nyears+1,length=5),labels = round(seq(2010,2010+nyears,length=5))) 
-      
+      replayPlot(req(trajec_plot_full()))
   })
   
   output$trajec_plot_main <- renderPlot({
     
     if(is.null(myReactives$polygon)){
       req(poparray())
-      maxabund <- max(sapply(1:nreps,function(t) max(apply(poparray()[t,,],1,sum)/1000) ))*1.2
-      
-      plot(1,1,pch="",xlim=c(1,nyears+1),
-           ylim=c(0,maxabund),
-           xaxt="n",xlab="Years",ylab="Abundance (thousands)", main="")  #paste0("Scenario ",thisscen," ",thisclim())
-      
-      temp <- lapply(1:nreps,function(t) lines(1:(nyears+1),apply(poparray()[t,,],1,sum)/1000,col=gray(0.6)) ) 
-      
-      lines(1:(nyears+1),apply(sapply(1:nreps,function(t) apply(poparray()[t,,],1,sum)),1,median)/1000,lwd=2)
-      
-      axis(1,at=seq(1,nyears+1,length=5),labels = round(seq(2010,2010+nyears,length=5))) 
+      replayPlot(req(trajec_plot_full()))
       
     }else{   # if full ROI polygon is available
       # display population trajectory over time 
       req(poparray_clipped())
-      maxabund <- max(sapply(1:nreps,function(t) max(apply(poparray_clipped()[t,,],1,sum)/1000) ))*1.2
-      
-      plot(1,1,pch="",xlim=c(1,nyears+1),
-           ylim=c(0,maxabund),
-           xaxt="n",xlab="Years",ylab="Abundance (thousands)", main="")  #paste0("Scenario ",thisscen," ",thisclim())
-      
-      temp <- lapply(1:nreps,function(t) lines(1:(nyears+1),apply(poparray_clipped()[t,,],1,sum)/1000,col=gray(0.6)) ) 
-      
-      lines(1:(nyears+1),apply(sapply(1:nreps,function(t) apply(poparray_clipped()[t,,],1,sum)),1,median)/1000,lwd=2)
-      
-      axis(1,at=seq(1,nyears+1,length=5),labels = round(seq(2010,2010+nyears,length=5)))
-      
+      replayPlot(req(trajec_plot_clipped()))
     }
   })
+  
+  output$download_TPfull <- downloadHandler(
+    # check to make sure polygon is available??
+    filename = function() {
+      sprintf("scen_%s_trajectoryPlots_full_range.png", scenndx() )
+    },
+    content = function(file) {
+      png(file,width = 5, height = 4,
+          res = 300, units = "in")
+       replayPlot(trajec_plot_full())
+      dev.off()
+    }
+  )   # end download handler
+  
+  output$download_TPmain <- downloadHandler(
+    # check to make sure polygon is available??
+    filename = function() {
+      sprintf("scen_%s_trajectoryPlots_ROI.png", scenndx() )
+    },
+    content = function(file) {
+      png(file,width = 5, height = 4,
+          res = 300, units = "in")
+      if(is.null(myReactives$polygon)){
+        replayPlot(trajec_plot_full())
+      }else{
+        replayPlot(trajec_plot_clipped())
+      }
+      dev.off()
+    }
+  )   # end download handler
   
   makeagedf <- function(parr){
     df <- NULL
@@ -1054,102 +1114,153 @@ server <- function(input, output, session) {
     return(df)
   })
   
-  output$trajec_plot_full_age <- renderPlot({
+  ageplot_full <- reactive({
     req(poparray())
-    # maxabund <- max(sapply(1:nreps,function(t) max(poparray()[t,,]/1000) ))*1.2
-    
     df <- agedf()
-    
-    ageplot <- ggplot(df,aes(year,abund,col=age)) +
+    ggplot(df,aes(year,abund,col=age)) +
       geom_ribbon(aes(ymin=lb,ymax=ub,fill=age),alpha=0.4) +
       geom_path(lwd=1.5) +
       labs(y="Total abundance (thousands)",x="Year",title = "Full Range")
-    print(ageplot)
-    
+  })
+  
+  ageplot_clipped <- reactive({
+    req(poparray_clipped())
+    df <- agedf_clipped()
+    ggplot(df,aes(year,abund,col=age)) +
+      geom_ribbon(aes(ymin=lb,ymax=ub,fill=age),alpha=0.4) +
+      geom_path(lwd=1.5) +
+      labs(y="Total abundance (thousands)",x="Year",title = "Selected ROI")
+  })
+  
+  output$trajec_plot_full_age <- renderPlot({
+    req(poparray())
+    ageplot_full()
   })
   
   output$trajec_plot_main_age <- renderPlot({
     
     if(is.null(myReactives$polygon)){
       req(poparray())
-      df <- agedf()
-      title <- "Full Range"
+      ageplot_full()
     }else{
       req(poparray_clipped())
-      df <- agedf_clipped()
-      title = "Selected ROI"
+      ageplot_clipped()
     }
-    ageplot <- ggplot(df,aes(year,abund,col=age)) +
-      geom_ribbon(aes(ymin=lb,ymax=ub,fill=age),alpha=0.4) +
-      geom_path(lwd=1.5) +
-      labs(y="Total abundance (thousands)",x="Year",title = title)
-    print(ageplot)
   })
+  
+  output$download_TP_age_full <- downloadHandler(
+    # check to make sure polygon is available??
+    filename = function() {
+      sprintf("scen_%s_trajectoryPlots_age_full_range.png", scenndx() )
+    },
+    content = function(file) {
+      png(file,width = 5, height = 4,
+          res = 300, units = "in")
+      plot(ageplot_full())
+      dev.off()
+    }
+  )   # end download handler
+  
+  output$download_TP_age_main <- downloadHandler(
+    # check to make sure polygon is available??
+    filename = function() {
+      sprintf("scen_%s_trajectoryPlots_age_ROI.png", scenndx() )
+    },
+    content = function(file) {
+      png(file,width = 5, height = 4,
+          res = 300, units = "in")
+      if(is.null(myReactives$polygon)){
+        plot(ageplot_full())
+      }else{
+        plot(ageplot_clipped())
+      }
+      dev.off()
+    }
+  )   # end download handler
+  
+  
+  trajec_plot_compare <- reactive({
+    these_scens <- as.character(input$compare_scen)
+    thisdf <- myReactives$compdf
+    if(nrow(thisdf)>0){
+      thisdf[,2:4] <- thisdf[,2:4]/1000
+      thisdf$year2 <- 2010+thisdf$year
+      thisdf$scenario <- as.character(thisdf$scenario)
+      thisdf <- thisdf %>% filter(scenario%in%these_scens)
+    
+      ggplot(thisdf,aes(year2,median,col=scenario)) +
+        geom_ribbon(aes(ymin=lb,ymax=ub,fill=scenario),alpha=0.4) +
+        geom_path(lwd=2) +
+        labs(y="Total abundance (thousands)",x="Year",title = "Full range")
+      # print(toret)
+    }else{
+      NULL
+    }
+    # return(toret)
+  })
+  
+  trajec_plot_compare_clipped <- reactive({
+    these_scens <- as.character(input$compare_scen_clipped)
+    thisdf <- myReactives$compdf_clipped
+    if(nrow(thisdf)>0){
+      thisdf[,2:4] <- thisdf[,2:4]/1000
+      thisdf$year2 <- 2010+thisdf$year
+      thisdf$scenario <- as.character(thisdf$scenario)
+      thisdf <- thisdf %>% filter(scenario%in%these_scens)
+      
+      ggplot(thisdf,aes(year2,median,col=scenario)) +
+        geom_ribbon(aes(ymin=lb,ymax=ub,fill=scenario),alpha=0.4) +
+        geom_path(lwd=2) +
+        labs(y="Total abundance (thousands)",x="Year",title = "Selected ROI")
+      # print(toret)
+    }else{
+      NULL
+    }
+    # return(toret)
+  })
+  
+  output$trajec_plot_compare <- renderPlot({
+    trajec_plot_compare()
+  }) 
   
   output$trajec_plot_compare_clipped <- renderPlot({
     
     if(is.null(myReactives$polygon)){
-      # display reg plot
-      these_scens <- as.character(input$compare_scen)
-      thisdf <- myReactives$compdf
-      thisdf[,2:4] <- thisdf[,2:4]/1000
-      thisdf$year2 <- 2010+thisdf$year
-      thisdf$scenario <- as.character(thisdf$scenario)
-      thisdf <- thisdf %>% filter(scenario%in%these_scens)
-      title="Full range"
+      trajec_plot_compare()
     }else{
-      these_scens <- as.character(input$compare_scen_clipped)
-      thisdf <- myReactives$compdf_clipped
-      thisdf[,2:4] <- thisdf[,2:4]/1000
-      thisdf$year2 <- 2010+thisdf$year
-      thisdf$scenario <- as.character(thisdf$scenario)
-      thisdf <- thisdf %>% filter(scenario%in%these_scens)
-      title="Selected ROI"
+      trajec_plot_compare_clipped()
     }
-    
-    if(nrow(thisdf)>0){
-      compplot <- ggplot(thisdf,aes(year2,median,col=scenario)) +
-        geom_ribbon(aes(ymin=lb,ymax=ub,fill=scenario),alpha=0.4) +
-        geom_path(lwd=2) +
-        labs(y="Total abundance (thousands)",x="Year",title = title)
-      print(compplot)
-    }else{
-      NULL
-    }
-    
   })
   
-  output$trajec_plot_compare <- renderPlot({
-    these_scens <- as.character(input$compare_scen)
-    thisdf <- myReactives$compdf
-    thisdf[,2:4] <- thisdf[,2:4]/1000
-    thisdf$year2 <- 2010+thisdf$year
-    thisdf$scenario <- as.character(thisdf$scenario)
-    thisdf <- thisdf %>% filter(scenario%in%these_scens)
-    if(nrow(thisdf)>0){
-      compplot <- ggplot(thisdf,aes(year2,median,col=scenario)) +
-        geom_ribbon(aes(ymin=lb,ymax=ub,fill=scenario),alpha=0.4) +
-        geom_path(lwd=2) +
-        labs(y="Total abundance (thousands)",x="Year",title = "Full range")
-      print(compplot)
-    }else{
-      NULL
+  output$download_TP_compare <- downloadHandler(
+    # check to make sure polygon is available??
+    filename = function() {
+      sprintf("scen_%s_trajectoryPlots_compare_full_range.png", scenndx() )
+    },
+    content = function(file) {
+      png(file,width = 5, height = 4,
+          res = 300, units = "in")
+       plot(trajec_plot_compare())
+      dev.off()
     }
-    
-      
-  })
+  )   # end download handler
   
-  #NEW#download ROI polygon 
-  #output$downloadPolygon <- downloadHandler({
-  #  filename = function() {
-  #    paste('data-', Sys.Date(), '.csv', sep='')
-  #  }
-  #  content = function(file) {
-  #    #csv_write<-array(0,dim=c(length(GHI_D),15))
-  #    csv_write<-cbind("hello")
-  #    write.csv(csv_write,row.names=FALSE, na="")
-  #  }
-  #})
+  output$download_TP_compare_TOC <- downloadHandler(
+    # check to make sure polygon is available??
+    filename = function() {
+      sprintf("scen_%s_trajectoryPlots_compare_ROI.png", scenndx() )
+    },
+    content = function(file) {
+      png(file,width = 5, height = 4,
+          res = 300, units = "in")
+      if(is.null(myReactives$polygon)){
+        plot(trajec_plot_compare())
+      }else{
+        plot(trajec_plot_compare_clipped())
+      }
+      dev.off()
+    }
+  )   # end download handler
   
   output$downloadPolygon <- downloadHandler(
       # check to make sure polygon is available??
@@ -1176,41 +1287,92 @@ server <- function(input, output, session) {
     }
   )   # end download handler
   
-  output$map_plot_main <- renderPlot({
-
-    thisyear <- as.numeric(input$map_year)
-    thisquant <- as.numeric(input$map_percentile)/100
-    ndx <- (thisyear*nages+1):((thisyear+1)*nages)
-    
-    if(is.null(myReactives$polygon)){
-      req(poparray())
-      thismap <- do.call("c",lapply(1:nreps, function(t) sum(myrasts()[[t]][[ndx]]) ) )
-    }else{
-      req(poparray_clipped())
-      thismap <- do.call("c",lapply(1:nreps, function(t) sum(myrasts_clipped()[[t]][[ndx]]) ) )
-    }
-    
-    globalmax <- max(global(thismap,"max",na.rm=T))
-    qmap <- quantile(thismap,thisquant)
-    qmap <- trim(qmap)
-    plot(qmap,range=c(0,globalmax) )
-  })
   
-  output$map_plot_full <- renderPlot({
-  
-    thisyear <- as.numeric(input$map_year)
-    thisquant <- as.numeric(input$map_percentile)/100
-    ndx <- (thisyear*nages+1):((thisyear+1)*nages)
-    
+  map_plot_full <- reactive({
     req(poparray())
     
+    thisyear <- as.numeric(input$map_year)
+    thisquant <- as.numeric(input$map_percentile)/100
+    ndx <- (thisyear*nages+1):((thisyear+1)*nages)
     
     thismap <- do.call("c",lapply(1:nreps, function(t) sum(myrasts()[[t]][[ndx]]) ) )
     globalmax <- max(global(thismap,"max",na.rm=T))
     qmap <- quantile(thismap,thisquant)
     qmap <- trim(qmap)
     plot(qmap,range=c(0,globalmax) )
+    recordPlot()
+    
   })
+  
+  map_plot_clipped <- reactive({
+    req(poparray_clipped())
+    
+    thisyear <- as.numeric(input$map_year)
+    thisquant <- as.numeric(input$map_percentile)/100
+    ndx <- (thisyear*nages+1):((thisyear+1)*nages)
+    
+    thismap <- do.call("c",lapply(1:nreps, function(t) sum(myrasts_clipped()[[t]][[ndx]]) ) )
+    globalmax <- max(global(thismap,"max",na.rm=T))
+    qmap <- quantile(thismap,thisquant)
+    qmap <- trim(qmap)
+    plot(qmap,range=c(0,globalmax) )
+    recordPlot()
+    
+  })
+  
+  
+  output$map_plot_full <- renderPlot({
+    req(poparray())
+    replayPlot(req(map_plot_full()))
+  })
+  
+  output$map_plot_main <- renderPlot({
+    
+    if(is.null(myReactives$polygon)){
+      req(poparray())
+      replayPlot(req(map_plot_full()))
+    }else{
+      req(poparray_clipped())
+      replayPlot(req(map_plot_clipped()))
+    }
+
+  })
+  
+  output$download_map_full <- downloadHandler(
+    # check to make sure polygon is available??
+    filename = function() {
+      thisyear <- as.numeric(input$map_year)
+      thisquant <- as.numeric(input$map_percentile)/100
+      sprintf("scen_%s_map_year_%s_quantile_%s_fullrange.png", scenndx(),thisyear,thisquant )
+    },
+    content = function(file) {
+      png(file,width = 6, height = 6,
+          res = 300, units = "in")
+       replayPlot(map_plot_full())
+      dev.off()
+    }
+  )   # end download handler
+  
+  output$download_map_TOC <- downloadHandler(
+    # check to make sure polygon is available??
+    filename = function() {
+      thisyear <- as.numeric(input$map_year)
+      thisquant <- as.numeric(input$map_percentile)/100
+      sprintf("scen_%s_map_year_%s_quantile_%s_TOC.png", scenndx(),thisyear,thisquant )
+    },
+    content = function(file) {
+      png(file,width = 5, height = 4,
+          res = 300, units = "in")
+      if(is.null(myReactives$polygon)){
+        replayPlot(map_plot_full())
+      }else{
+        replayPlot(map_plot_clipped())
+      }
+      dev.off()
+    }
+  )   # end download handler
+  
+
  
 }  # end server
 
